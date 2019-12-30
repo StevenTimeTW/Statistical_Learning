@@ -1,0 +1,23 @@
+library(MASS)
+set.seed(10)
+train<-sample(1:nrow(heart),200)
+traindata=heart[train,]
+testdata=heart[-train,]
+target=as.factor(heart$target)
+target.test<-target[-train]
+fit.lda<-lda(target~.,data = traindata)
+pred.lda<-predict(fit.lda,testdata)
+table(pred.lda$class,target.test)
+fit.qda<-qda(target~.,data = traindata)
+pred.qda<-predict(fit.qda,testdata)
+table(pred.qda$class,target.test)
+fit.lda1<-lda(target~cp+thalach+slope+exang+oldpeak+ca+thal,data = traindata)
+pred.lda1<-predict(fit.lda1,testdata)
+table(pred.lda1$class,target.test)
+fit.qda1<-qda(target~cp+thalach+slope+exang+oldpeak+ca+thal,data = traindata)
+pred.qda1<-predict(fit.qda1,testdata)
+table(pred.qda1$class,target.test)
+ROCR.2=prediction(pred.lda$posterior[,2],target.test) ROCRp.2=performance(ROCR.2,'tpr','fpr') plot(ROCRp.2,colorize=TRUE,main='LDA ROC曲線') 
+as.numeric(performance(ROCR.2,'auc')@y.values) ROCR.3=prediction(pred.qda$posterior[,2],target.test) ROCRp.3=performance(ROCR.3,'tpr','fpr') plot(ROCRp.3,colorize=TRUE,main='QDA ROC曲線') 
+as.numeric(performance(ROCR.3,'auc')@y.values) ROCR.4=prediction(pred.lda1$posterior[,2],target.test) ROCRp.4=performance(ROCR.4,'tpr','fpr') plot(ROCRp.4,colorize=TRUE,main='LDA1 ROC曲線') 
+as.numeric(performance(ROCR.4,'auc')@y.values) ROCR.5=prediction(pred.qda1$posterior[,2],target.test) ROCRp.5=performance(ROCR.5,'tpr','fpr') plot(ROCRp.5,colorize=TRUE,main='QDA1 ROC曲線') as.numeric(performance(ROCR.5,'auc')@y.values)
